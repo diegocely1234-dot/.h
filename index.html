@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 Grupos · Verbos Irregulares EGI2</title>
+<style>
+:root{
+  --bg1:#eef2ff;--bg2:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#64748b;
+  --primary:#4f46e5;--primary-d:#4338ca;--ok:#16a34a;--ok-bg:#dcfce7;
+  --bad:#dc2626;--bad-bg:#fee2e2;--line:#e2e8f0;--r:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;padding:18px;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2) 45%);
+  color:var(--ink);min-height:100vh}
+.app{max-width:920px;margin:0 auto}
+header{text-align:center;margin-bottom:22px}
+header h1{margin:0;font-size:1.6rem;letter-spacing:-.5px}
+header p{margin:6px 0 0;color:var(--muted);font-size:.9rem}
+.screen{display:none;animation:fade .25s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.panel{background:var(--card);border-radius:var(--r);padding:20px;
+  box-shadow:0 6px 24px rgba(15,23,42,.07);margin-bottom:16px}
+.panel h2{margin:0 0 14px;font-size:.95rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);font-weight:700}
+.btn{padding:13px 26px;border-radius:12px;border:none;font-size:.95rem;
+  font-weight:700;cursor:pointer;transition:.15s;font-family:inherit}
+.btn.primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.28)}
+.btn.primary:hover{background:var(--primary-d);transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:#c7d2fe}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.bad{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* ---- grid grupos ---- */
+.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.group-card{border:2px solid var(--line);border-radius:12px;padding:12px;
+  cursor:pointer;transition:.15s;background:#fff;position:relative}
+.group-card:hover{border-color:#c7d2fe}
+.group-card.on{border-color:var(--gc);background:color-mix(in srgb,var(--gc) 8%,#fff)}
+.group-card .g-num{font-size:.75rem;font-weight:800;color:var(--gc);
+  letter-spacing:.05em;text-transform:uppercase}
+.group-card .g-pattern{font-size:1rem;font-weight:800;margin:4px 0;color:var(--ink)}
+.group-card .g-desc{font-size:.72rem;color:var(--muted);line-height:1.3}
+.group-card .g-count{position:absolute;top:8px;right:10px;font-size:.68rem;
+  background:var(--gc);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700}
+.group-card input{position:absolute;opacity:0;pointer-events:none}
+
+/* ---- modos ---- */
+.mode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.mode-card{border:2px solid var(--line);border-radius:12px;padding:14px;
+  cursor:pointer;transition:.15s;background:#fff;text-align:left;font-family:inherit}
+.mode-card:hover{border-color:#c7d2fe}
+.mode-card.sel{border-color:var(--primary);background:#f5f3ff;
+  box-shadow:0 4px 14px rgba(79,70,229,.15)}
+.mode-ico{font-size:1.4rem;display:block;margin-bottom:6px}
+.mode-card strong{display:block;font-size:.9rem;color:var(--ink)}
+.mode-card small{display:block;font-size:.75rem;color:var(--muted);margin-top:3px}
+
+/* ---- opciones ---- */
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);
+  background:#fff;cursor:pointer;font-size:.87rem;font-weight:600;
+  color:var(--muted);transition:.15s;font-family:inherit}
+.opt:hover{border-color:#c7d2fe}
+.opt.sel{background:var(--primary);border-color:var(--primary);color:#fff;
+  box-shadow:0 4px 12px rgba(79,70,229,.3)}
+
+/* ---- topbar ---- */
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.topbar .back{background:#fff;border:1.5px solid var(--line);border-radius:10px;
+  padding:8px 14px;cursor:pointer;font-weight:600;font-size:.85rem;font-family:inherit}
+.bar{flex:1;height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:0;
+  background:linear-gradient(90deg,#6366f1,#8b5cf6);border-radius:99px;transition:width .3s}
+.counter{font-size:.85rem;font-weight:700;color:var(--muted);min-width:64px;text-align:right}
+
+/* ---- tarjeta pregunta ---- */
+.card{background:var(--card);border-radius:20px;padding:28px 22px;
+  box-shadow:0 10px 34px rgba(15,23,42,.09);margin-bottom:16px}
+.g-badge{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;
+  font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  padding:5px 12px;border-radius:99px;color:#fff;margin-bottom:16px}
+.q-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);font-weight:700;margin-bottom:8px}
+.q-form{font-size:2.1rem;font-weight:800;letter-spacing:-.7px;line-height:1.2}
+.q-sub{font-size:.9rem;color:var(--muted);margin-top:8px}
+.q-sub b{color:var(--ink)}
+
+/* ---- opciones de respuesta ---- */
+.choices{display:grid;grid-template-columns:1fr;gap:10px;margin-top:22px}
+@media(min-width:560px){.choices.two{grid-template-columns:1fr 1fr}}
+.choice{padding:15px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:.95rem;font-weight:600;cursor:pointer;transition:.15s;
+  font-family:inherit;color:var(--ink);text-align:left}
+.choice:hover:not(:disabled){border-color:var(--primary);background:#f5f3ff}
+.choice.correct{background:var(--ok-bg);border-color:var(--ok);color:#14532d}
+.choice.wrong{background:var(--bad-bg);border-color:var(--bad);color:#7f1d1d}
+
+/* ---- inputs ---- */
+input[type=text]{width:100%;padding:15px 16px;border-radius:12px;font-size:1.05rem;
+  border:2px solid var(--line);font-family:inherit;outline:none;transition:.15s;
+  background:#f8fafc;text-align:center;font-weight:600}
+input[type=text]:focus{border-color:var(--primary);background:#fff}
+input[type=text].ok{border-color:var(--ok);background:var(--ok-bg)}
+input[type=text].bad{border-color:var(--bad);background:var(--bad-bg)}
+.verb-grid{display:grid;gap:12px;margin-top:20px;text-align:left}
+.verb-grid label{font-size:.78rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--muted);display:block}
+.verb-grid input{margin-top:6px;text-align:left}
+
+/* ---- feedback ---- */
+.feedback{margin-top:16px;font-size:.95rem;font-weight:600;min-height:22px}
+.feedback.ok{color:var(--ok)}
+.feedback.bad{color:var(--bad)}
+.feedback .fix{display:block;color:var(--ink);font-weight:700;margin-top:4px}
+.verb-info{margin-top:18px;padding:16px;border-radius:12px;background:#f8fafc;
+  border-left:4px solid var(--primary);text-align:left}
+.verb-info .vi-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);font-weight:700;margin-bottom:8px}
+.verb-info .vi-forms{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.verb-info .vi-form{background:#fff;border:1.5px solid var(--line);border-radius:8px;
+  padding:6px 12px;font-size:.88rem;font-weight:700}
+.verb-info .vi-form small{display:block;font-size:.65rem;color:var(--muted);
+  font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.verb-info .vi-meaning{font-size:.9rem;color:#334155}
+.verb-info .vi-meaning b{color:var(--primary)}
+
+/* ---- resultados ---- */
+.score{font-size:3.2rem;font-weight:900;letter-spacing:-2px;line-height:1;margin:6px 0}
+.score small{font-size:1.2rem;color:var(--muted);font-weight:700}
+.msg{color:var(--muted);font-size:1rem;margin-bottom:6px}
+.missed{text-align:left;margin-top:18px}
+.missed h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:10px}
+.miss-item{background:#f8fafc;border-left:4px solid var(--bad);border-radius:0 10px 10px 0;
+  padding:10px 14px;margin-bottom:8px;font-size:.88rem}
+.miss-item b{display:block;font-size:.95rem}
+.miss-item .mi-forms{color:var(--muted);font-size:.82rem;margin-top:2px}
+.miss-item .mi-es{color:var(--primary);font-weight:600;margin-top:2px}
+
+/* ---- estudiar ---- */
+.study-group{border-radius:14px;padding:16px;margin-bottom:14px;background:#fff;
+  box-shadow:0 4px 16px rgba(15,23,42,.06);border-top:4px solid var(--gc)}
+.study-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.study-head .sh-num{font-size:.72rem;font-weight:800;color:#fff;background:var(--gc);
+  padding:4px 10px;border-radius:99px;letter-spacing:.05em;text-transform:uppercase}
+.study-head .sh-pattern{font-size:1rem;font-weight:800;color:var(--ink)}
+.study-head .sh-desc{font-size:.78rem;color:var(--muted);width:100%}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line)}
+th{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td.base{font-weight:800;color:var(--ink)}
+td.past,td.pp{color:#475569;font-weight:600}
+td.es{color:var(--primary);font-weight:600}
+.spk{background:none;border:none;cursor:pointer;font-size:.9rem;padding:2px 6px;
+  border-radius:6px;color:var(--muted)}
+.spk:hover{background:#eef2ff;color:var(--primary)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🔤 10 Grupos de Verbos Irregulares</h1>
+    <p>Identifica el tiempo · aprende el significado · memoriza los grupos</p>
+  </header>
+
+  <!-- ================= SETUP ================= -->
+  <section id="screen-setup" class="screen active">
+    <div class="panel">
+      <h2>1 · Elige los grupos</h2>
+      <div id="groupGrid" class="group-grid"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn ghost" id="btnAllGroups">Todos</button>
+        <button class="btn ghost" id="btnNoGroups">Ninguno</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>2 · Elige el modo</h2>
+      <div class="mode-grid" id="modeGrid">
+        <button class="mode-card sel" data-mode="tense">
+          <span class="mode-ico">🎯</span>
+          <strong>¿Qué tiempo es?</strong>
+          <small>Identifica base, pasado o participio</small>
+        </button>
+        <button class="mode-card" data-mode="meaning">
+          <span class="mode-ico">🇪🇸</span>
+          <strong>¿Qué significa?</strong>
+          <small>Elige el significado en español</small>
+        </button>
+        <button class="mode-card" data-mode="forms">
+          <span class="mode-ico">✍️</span>
+          <strong>Completar formas</strong>
+          <small>Escribe el pasado y participio</small>
+        </button>
+        <button class="mode-card" data-mode="mixed">
+          <span class="mode-ico">🔀</span>
+          <strong>Mezcla</strong>
+          <small>Todos los tipos de pregunta</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>3 · Cantidad de preguntas</h2>
+      <div class="opts" id="countOpts">
+        <button class="opt" data-count="10">10</button>
+        <button class="opt sel" data-count="20">20</button>
+        <button class="opt" data-count="40">40</button>
+        <button class="opt" data-count="0">Todas</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" id="btnStudy">📖 Estudiar los grupos</button>
+      <button class="btn primary" id="btnStart">Empezar a practicar →</button>
+    </div>
+  </section>
+
+  <!-- ================= STUDY ================= -->
+  <section id="screen-study" class="screen">
+    <div class="topbar">
+      <button class="back" id="btnBackStudy">← Volver</button>
+      <strong style="font-size:.92rem">Referencia rápida</strong>
+    </div>
+    <div id="studyContent"></div>
+  </section>
+
+  <!-- ================= PRACTICE ================= -->
+  <section id="screen-practice" class="screen">
+    <div class="topbar">
+      <button class="back" id="btnExitPractice">← Salir</button>
+      <div class="bar"><i id="progressBar"></i></div>
+      <div class="counter" id="counter">1 / 20</div>
+    </div>
+    <div class="card" id="questionCard"></div>
+    <div class="btn-row" id="actions"></div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section id="screen-results" class="screen">
+    <div class="panel" style="text-align:center">
+      <div class="msg" id="resMsg"></div>
+      <div class="score" id="resScore">0<small>/0</small></div>
+      <div class="msg" id="resPct"></div>
+      <div class="missed" id="resMissed"></div>
+      <div class="btn-row" style="margin-top:22px">
+        <button class="btn ghost" id="btnRetryFailed">🔁 Repasar las falladas</button>
+        <button class="btn primary" id="btnNewSession">Nueva sesión</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   DATOS — LOS 10 GRUPOS
+   ========================================================= */
+const GROUPS = [
+{
+  id:1, num:1, pattern:'i → a → u', color:'#6366f1',
+  desc:'Cambia la vocal: i → a → u',
+  verbs:[
+    {base:'begin', past:'began', pp:'begun', es:'comenzar, empezar'},
+    {base:'drink', past:'drank', pp:'drunk', es:'beber, tomar'},
+    {base:'ring',  past:'rang',  pp:'rung',  es:'sonar, llamar'},
+    {base:'sing',  past:'sang',  pp:'sung',  es:'cantar'},
+    {base:'swim',  past:'swam',  pp:'swum',  es:'nadar'}
+  ]
+},
+{
+  id:2, num:2, pattern:'i → o → i', color:'#8b5cf6',
+  desc:'Cambia la vocal: i → o → i',
+  verbs:[
+    {base:'drive', past:'drove', pp:'driven', es:'conducir, manejar'},
+    {base:'ride',  past:'rode',  pp:'ridden', es:'montar, ir en'},
+    {base:'rise',  past:'rose',  pp:'risen',  es:'subir, elevarse'},
+    {base:'write', past:'wrote', pp:'written', es:'escribir'}
+  ]
+},
+{
+  id:3, num:3, pattern:'o → a → o', color:'#ec4899',
+  desc:'Cambia la vocal: o → a → o (base = participio)',
+  verbs:[
+    {base:'become', past:'became', pp:'become', es:'llegar a ser, convertirse'},
+    {base:'come',   past:'came',   pp:'come',   es:'venir'},
+    {base:'run',    past:'ran',    pp:'run',    es:'correr'}
+  ]
+},
+{
+  id:4, num:4, pattern:'e → o → o', color:'#f59e0b',
+  desc:'Cambia la vocal: e → o → o',
+  verbs:[
+    {base:'break',  past:'broke', pp:'broken',    es:'romper'},
+    {base:'choose', past:'chose', pp:'chosen',    es:'elegir, escoger'},
+    {base:'forget', past:'forgot', pp:'forgotten', es:'olvidar'},
+    {base:'freeze', past:'froze', pp:'frozen',    es:'congelar'},
+    {base:'speak',  past:'spoke', pp:'spoken',    es:'hablar'},
+    {base:'steal',  past:'stole', pp:'stolen',    es:'robar'},
+    {base:'wake',   past:'woke',  pp:'woken',     es:'despertar(se)'}
+  ]
+},
+{
+  id:5, num:5, pattern:'-t (pasado = participio)', color:'#10b981',
+  desc:'El pasado y el participio son iguales y terminan en -t',
+  verbs:[
+    {base:'feed',  past:'fed',   pp:'fed',   es:'alimentar'},
+    {base:'feel',  past:'felt',  pp:'felt',  es:'sentir'},
+    {base:'keep',  past:'kept',  pp:'kept',  es:'mantener, guardar'},
+    {base:'leave', past:'left',  pp:'left',  es:'salir, dejar'},
+    {base:'meet',  past:'met',   pp:'met',   es:'conocer, encontrarse con'},
+    {base:'sleep', past:'slept', pp:'slept', es:'dormir'}
+  ]
+},
+{
+  id:6, num:6, pattern:'-ght (pasado = participio)', color:'#06b6d4',
+  desc:'Añade -ght: el pasado y el participio son iguales',
+  verbs:[
+    {base:'bring', past:'brought', pp:'brought', es:'traer'},
+    {base:'buy',   past:'bought',  pp:'bought',  es:'comprar'},
+    {base:'catch', past:'caught',  pp:'caught',  es:'atrapar, agarrar'},
+    {base:'fight', past:'fought',  pp:'fought',  es:'pelear, luchar'},
+    {base:'teach', past:'taught',  pp:'taught',  es:'enseñar'},
+    {base:'think', past:'thought', pp:'thought', es:'pensar'}
+  ]
+},
+{
+  id:7, num:7, pattern:'o → e → o', color:'#f97316',
+  desc:'Cambia la vocal: o → e → o (participio termina en -n)',
+  verbs:[
+    {base:'blow',  past:'blew',  pp:'blown',  es:'soplar'},
+    {base:'fly',   past:'flew',  pp:'flown',  es:'volar'},
+    {base:'grow',  past:'grew',  pp:'grown',  es:'crecer'},
+    {base:'know',  past:'knew',  pp:'known',  es:'saber, conocer'},
+    {base:'throw', past:'threw', pp:'thrown', es:'lanzar, tirar'}
+  ]
+},
+{
+  id:8, num:8, pattern:'a → e → a', color:'#ef4444',
+  desc:'Cambia la vocal: a → e → a (participio termina en -n)',
+  verbs:[
+    {base:'fall',    past:'fell',     pp:'fallen',    es:'caer(se)'},
+    {base:'forgive', past:'forgave',  pp:'forgiven',  es:'perdonar'},
+    {base:'give',    past:'gave',     pp:'given',     es:'dar'},
+    {base:'take',    past:'took',     pp:'taken',     es:'tomar, llevar'}
+  ]
+},
+{
+  id:9, num:9, pattern:'Sin cambio', color:'#64748b',
+  desc:'Las tres formas son idénticas',
+  verbs:[
+    {base:'bet',  past:'bet', pp:'bet', es:'apostar'},
+    {base:'cut',  past:'cut', pp:'cut', es:'cortar'},
+    {base:'hit',  past:'hit', pp:'hit', es:'golpear'},
+    {base:'hurt', past:'hurt', pp:'hurt', es:'lastimar, doler'},
+    {base:'let',  past:'let', pp:'let', es:'dejar, permitir'},
+    {base:'put',  past:'put', pp:'put', es:'poner'},
+    {base:'set',  past:'set', pp:'set', es:'poner, colocar'}
+  ]
+},
+{
+  id:10, num:10, pattern:'Cambios irregulares', color:'#7c3aed',
+  desc:'Cambios únicos que debes memorizar',
+  verbs:[
+    {base:'be',   past:'was / were', pp:'been', es:'ser, estar'},
+    {base:'do',   past:'did',  pp:'done', es:'hacer'},
+    {base:'go',   past:'went', pp:'gone', es:'ir'},
+    {base:'have', past:'had',  pp:'had',  es:'tener, haber'},
+    {base:'make', past:'made', pp:'made', es:'hacer, fabricar'},
+    {base:'pay',  past:'paid', pp:'paid', es:'pagar'},
+    {base:'see',  past:'saw',  pp:'seen', es:'ver'}
+  ]
+}
+];
+
+const ALL_VERBS = [];
+GROUPS.forEach(g => g.verbs.forEach(v => ALL_VERBS.push({...v, group:g})));
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $ = id => document.getElementById(id);
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function normalize(s){
+  return (s||'').toString().toLowerCase().trim()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/^(to|the|a|an|el|la|los|las|un|una)\s+/,'')
+    .replace(/[.,;:!?¿¡"']/g,'')
+    .replace(/\s+/g,' ').trim();
+}
+
+function checkPast(input, verb){
+  const n = normalize(input);
+  if(normalize(verb.past) === n) return true;
+  if(verb.base === 'be'){
+    return ['was','were','was/were','was / were','was or were']
+      .some(a => normalize(a) === n);
+  }
+  return false;
+}
+function checkPP(input, verb){
+  return normalize(input) === normalize(verb.pp);
+}
+
+function speak(text){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+const state = {
+  selectedGroups: new Set([1,2,3,4,5,6,7,8,9,10]),
+  mode: 'tense',
+  count: 20,
+  queue: [],
+  index: 0,
+  correct: 0,
+  wrong: 0,
+  failed: [],
+  answered: false
+};
+
+/* =========================================================
+   RENDER SETUP
+   ========================================================= */
+function renderGroups(){
+  $('groupGrid').innerHTML = GROUPS.map(g => `
+    <label class="group-card ${state.selectedGroups.has(g.id)?'on':''}"
+           style="--gc:${g.color}" data-gid="${g.id}">
+      <input type="checkbox" ${state.selectedGroups.has(g.id)?'checked':''}>
+      <span class="g-count">${g.verbs.length}</span>
+      <div class="g-num">Grupo ${g.num}</div>
+      <div class="g-pattern">${g.pattern}</div>
+      <div class="g-desc">${g.desc}</div>
+    </label>
+  `).join('');
+
+  $('groupGrid').querySelectorAll('.group-card').forEach(card=>{
+    card.onclick = e=>{
+      if(e.target.tagName !== 'INPUT'){
+        const cb = card.querySelector('input');
+        cb.checked = !cb.checked;
+      }
+      const gid = parseInt(card.dataset.gid,10);
+      const cb = card.querySelector('input');
+      if(cb.checked){ state.selectedGroups.add(gid); card.classList.add('on'); }
+      else { state.selectedGroups.delete(gid); card.classList.remove('on'); }
+    };
+  });
+}
+
+function wireMode(){
+  $('modeGrid').querySelectorAll('.mode-card').forEach(btn=>{
+    btn.onclick = ()=>{
+      $('modeGrid').querySelectorAll('.mode-card').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      state.mode = btn.dataset.mode;
+    };
+  });
+}
+
+function wireCount(){
+  $('countOpts').querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick = ()=>{
+      $('countOpts').querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      state.count = parseInt(btn.dataset.count,10);
+    };
+  });
+}
+
+/* =========================================================
+   GENERACIÓN DE PREGUNTAS
+   ========================================================= */
+function getVerbs(){
+  const out = [];
+  GROUPS.filter(g => state.selectedGroups.has(g.id))
+        .forEach(g => g.verbs.forEach(v => out.push({...v, group:g})));
+  return out;
+}
+
+function buildTenseQuestions(verb){
+  const qs = [];
+  const {base, past, pp} = verb;
+  if(base !== past && base !== pp){
+    qs.push({type:'tense', form:'base', formValue:base, answer:'base', verb});
+  }
+  if(past !== base && past !== pp){
+    qs.push({type:'tense', form:'past', formValue:past, answer:'past', verb});
+  }
+  if(pp !== base && pp !== past){
+    qs.push({type:'tense', form:'pp', formValue:pp, answer:'pp', verb});
+  }
+  return qs;
+}
+
+function buildQueue(){
+  const verbs = getVerbs();
+  if(!verbs.length) return [];
+
+  let questions = [];
+
+  if(state.mode === 'tense'){
+    questions = verbs.flatMap(buildTenseQuestions);
+  }
+  else if(state.mode === 'meaning'){
+    questions = verbs.map(v => ({type:'meaning', verb:v}));
+  }
+  else if(state.mode === 'forms'){
+    questions = verbs.map(v => ({type:'forms', verb:v}));
+  }
+  else if(state.mode === 'mixed'){
+    const tenseQs = verbs.flatMap(buildTenseQuestions);
+    const meaningQs = verbs.map(v => ({type:'meaning', verb:v}));
+    const formsQs = verbs.map(v => ({type:'forms', verb:v}));
+    questions = [...tenseQs, ...meaningQs, ...formsQs];
+  }
+
+  questions = shuffle(questions);
+  if(state.count > 0) questions = questions.slice(0, state.count);
+  return questions;
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('screen-'+name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* =========================================================
+   ESTUDIAR
+   ========================================================= */
+function renderStudy(){
+  const selected = GROUPS.filter(g => state.selectedGroups.has(g.id));
+  const list = selected.length ? selected : GROUPS;
+
+  $('studyContent').innerHTML = list.map(g => `
+    <div class="study-group" style="--gc:${g.color}">
+      <div class="study-head">
+        <span class="sh-num" style="background:${g.color}">Grupo ${g.num}</span>
+        <span class="sh-pattern">${g.pattern}</span>
+        <button class="spk" data-say="${g.verbs.map(v=>v.base).join(', ')}"
+                title="Escuchar">🔊</button>
+        <span class="sh-desc">${g.desc}</span>
+      </div>
+      <table>
+        <thead><tr><th>Base</th><th>Pasado</th><th>Participio</th><th>Español</th></tr></thead>
+        <tbody>
+          ${g.verbs.map(v=>`
+            <tr>
+              <td class="base">${v.base}
+                <button class="spk" data-say="${v.base}">🔊</button></td>
+              <td class="past">${v.past}</td>
+              <td class="pp">${v.pp}</td>
+              <td class="es">${v.es}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `).join('');
+
+  $('studyContent').querySelectorAll('.spk').forEach(b=>{
+    b.onclick = e=>{ e.stopPropagation(); speak(b.dataset.say); };
+  });
+  showScreen('study');
+}
+
+/* =========================================================
+   PRÁCTICA — RENDER PREGUNTA
+   ========================================================= */
+function renderQuestion(){
+  const q = state.queue[state.index];
+  if(!q){ showResults(); return; }
+
+  const total = state.queue.length;
+  $('counter').textContent = `${state.index+1} / ${total}`;
+  $('progressBar').style.width = (state.index/total*100) + '%';
+  state.answered = false;
+
+  if(q.type === 'tense')       renderTense(q);
+  else if(q.type === 'meaning') renderMeaning(q);
+  else if(q.type === 'forms')   renderForms(q);
+}
+
+/* ---- ¿Qué tiempo es? ---- */
+function renderTense(q){
+  const v = q.verb;
+  const g = v.group;
+  const formLabel = q.form === 'base' ? 'forma base (infinitivo)'
+                  : q.form === 'past' ? 'pasado simple'
+                  : 'participio pasado';
+  const answerLabel = q.answer === 'base' ? 'Base (infinitivo)'
+                    : q.answer === 'past' ? 'Pasado simple'
+                    : 'Participio pasado';
+
+  $('questionCard').innerHTML = `
+    <div class="g-badge" style="background:${g.color}">
+      Grupo ${g.num} · ${g.pattern}
+    </div>
+    <div class="q-label">Verbo: ${v.base} <span style="color:${g.color}">(${v.es})</span></div>
+    <div class="q-form" style="color:${g.color}">${q.formValue}</div>
+    <div class="q-sub">¿Qué tiempo es esta forma?</div>
+    <div class="choices" id="choices">
+      <button class="choice" data-ans="base">Base (infinitivo)</button>
+      <button class="choice" data-ans="past">Pasado simple</button>
+      <button class="choice" data-ans="pp">Participio pasado</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div id="verbInfo"></div>
+  `;
+
+  $('actions').innerHTML = '';
+
+  $('choices').querySelectorAll('.choice').forEach(btn=>{
+    btn.onclick = ()=>{
+      if(state.answered) return;
+      state.answered = true;
+
+      const chosen = btn.dataset.ans;
+      const ok = chosen === q.answer;
+
+      $('choices').querySelectorAll('.choice').forEach(b=>{
+        b.disabled = true;
+        if(b.dataset.ans === q.answer) b.classList.add('correct');
+      });
+      if(!ok) btn.classList.add('wrong');
+
+      register(ok, q);
+      showFeedback(ok, ok ? '¡Correcto! 🎉' : `Incorrecto. Era: <b>${answerLabel}</b>`);
+      showVerbInfo(q.verb, ok);
+
+      $('actions').innerHTML = `<button class="btn primary" id="btnNext">Siguiente →</button>`;
+      $('btnNext').onclick = nextQuestion;
+      $('btnNext').focus();
+    };
+  });
+}
+
+/* ---- ¿Qué significa? ---- */
+function renderMeaning(q){
+  const v = q.verb;
+  const g = v.group;
+
+  // Elegir una forma al azar para mostrar
+  const forms = [
+    {val:v.base, label:'base'},
+    {val:v.past, label:'pasado'},
+    {val:v.pp,   label:'participio'}
+  ].filter(f => f.val && !f.val.includes('/'));
+  const pick = forms[Math.floor(Math.random()*forms.length)];
+
+  // Distractores
+  const used = new Set([normalize(v.es)]);
+  const distractors = [];
+  for(const other of shuffle([...ALL_VERBS])){
+    const n = normalize(other.es);
+    if(used.has(n)) continue;
+    used.add(n);
+    distractors.push(other.es);
+    if(distractors.length === 3) break;
+  }
+  const options = shuffle([v.es, ...distractors]);
+
+  $('questionCard').innerHTML = `
+    <div class="g-badge" style="background:${g.color}">
+      Grupo ${g.num} · ${g.pattern}
+    </div>
+    <div class="q-label">Forma: <b>${pick.label}</b></div>
+    <div class="q-form" style="color:${g.color}">${pick.val}</div>
+    <div class="q-sub">¿Qué significa en español?</div>
+    <div class="choices two" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <div id="verbInfo"></div>
+  `;
+
+  $('actions').innerHTML = '';
+
+  const box = $('choices');
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = opt;
+    b.onclick = ()=>{
+      if(state.answered) return;
+      state.answered = true;
+      const ok = normalize(opt) === normalize(v.es);
+
+      box.querySelectorAll('.choice').forEach(x=>{
+        x.disabled = true;
+        if(normalize(x.textContent) === normalize(v.es)) x.classList.add('correct');
+      });
+      if(!ok) b.classList.add('wrong');
+
+      register(ok, q);
+      showFeedback(ok, ok ? '¡Correcto! 🎉' : `Incorrecto. Significa: <b>${v.es}</b>`);
+      showVerbInfo(v, ok);
+
+      $('actions').innerHTML = `<button class="btn primary" id="btnNext">Siguiente →</button>`;
+      $('btnNext').onclick = nextQuestion;
+      $('btnNext').focus();
+    };
+    box.appendChild(b);
+  });
+}
+
+/* ---- Completar formas ---- */
+function renderForms(q){
+  const v = q.verb;
+  const g = v.group;
+
+  $('questionCard').innerHTML = `
+    <div class="g-badge" style="background:${g.color}">
+      Grupo ${g.num} · ${g.pattern}
+    </div>
+    <div class="q-label">Verbo: ${v.base} <span style="color:${g.color}">(${v.es})</span></div>
+    <div class="q-form" style="color:${g.color}">${v.base}</div>
+    <div class="q-sub">Completa el pasado y el participio pasado</div>
+    <div class="verb-grid">
+      <div>
+        <label>Pasado simple</label>
+        <input type="text" id="fPast" autocomplete="off" spellcheck="false"
+               placeholder="${v.base === 'be' ? 'was / were' : ''}">
+      </div>
+      <div>
+        <label>Participio pasado</label>
+        <input type="text" id="fPP" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div id="verbInfo"></div>
+  `;
+
+  $('actions').innerHTML = `<button class="btn primary" id="btnCheck">Comprobar</button>`;
+
+  $('fPast').focus();
+  ['fPast','fPP'].forEach(id=>{
+    $(id).addEventListener('keydown', e=>{ if(e.key==='Enter') check(); });
+  });
+
+  function check(){
+    if(state.answered){ nextQuestion(); return; }
+    const pastVal = $('fPast').value.trim();
+    const ppVal   = $('fPP').value.trim();
+    if(!pastVal && !ppVal){ $('fPast').focus(); return; }
+
+    const okPast = checkPast(pastVal, v);
+    const okPP   = checkPP(ppVal, v);
+    const ok     = okPast && okPP;
+
+    state.answered = true;
+
+    $('fPast').disabled = true;
+    $('fPP').disabled = true;
+    $('fPast').classList.add(okPast ? 'ok' : 'bad');
+    $('fPP').classList.add(okPP ? 'ok' : 'bad');
+
+    register(ok, q);
+    showFeedback(ok,
+      ok ? '¡Perfecto! Las dos formas son correctas 🎉'
+         : 'Revisa las formas correctas abajo.');
+    showVerbInfo(v, ok);
+
+    $('actions').innerHTML = `<button class="btn primary" id="btnNext">Siguiente →</button>`;
+    $('btnNext').onclick = nextQuestion;
+    $('btnNext').focus();
+  }
+
+  $('btnCheck').onclick = check;
+}
+
+/* =========================================================
+   FEEDBACK + INFO DEL VERBO
+   ========================================================= */
+function showFeedback(ok, html){
+  const fb = $('feedback');
+  if(!fb) return;
+  fb.className = 'feedback ' + (ok ? 'ok' : 'bad');
+  fb.innerHTML = html;
+}
+
+function showVerbInfo(verb, ok){
+  const g = verb.group;
+  const box = $('verbInfo');
+  if(!box) return;
+  box.innerHTML = `
+    <div class="verb-info" style="border-left-color:${g.color}">
+      <div class="vi-title">Grupo ${g.num} · ${g.pattern}</div>
+      <div class="vi-forms">
+        <div class="vi-form"><small>Base</small>${verb.base}</div>
+        <div class="vi-form"><small>Pasado</small>${verb.past}</div>
+        <div class="vi-form"><small>Participio</small>${verb.pp}</div>
+      </div>
+      <div class="vi-meaning">🇪🇸 <b>${verb.es}</b></div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   LÓGICA DE SESIÓN
+   ========================================================= */
+function register(ok, q){
+  if(ok) state.correct++;
+  else { state.wrong++; state.failed.push(q); }
+}
+
+function nextQuestion(){
+  state.index++;
+  if(state.index >= state.queue.length) showResults();
+  else renderQuestion();
+}
+
+function showResults(){
+  $('progressBar').style.width = '100%';
+  const total = state.correct + state.wrong;
+  const pct = total ? Math.round(state.correct/total*100) : 0;
+
+  $('resScore').innerHTML = `${state.correct}<small>/${total}</small>`;
+  $('resPct').textContent = `${pct}% de aciertos`;
+
+  let msg;
+  if(pct === 100) msg = '🏆 ¡Perfecto! Dominas los 10 grupos.';
+  else if(pct >= 80) msg = '🌟 ¡Muy bien! Ya casi los tienes.';
+  else if(pct >= 60) msg = '👍 Buen trabajo, repasa las falladas.';
+  else if(pct >= 40) msg = '💪 Sigue practicando, vas por buen camino.';
+  else msg = '📖 Repasa los grupos y vuelve a intentarlo.';
+  $('resMsg').textContent = msg;
+
+  if(state.failed.length){
+    $('resMissed').innerHTML = `<h3>Para repasar (${state.failed.length})</h3>` +
+      state.failed.map(q=>{
+        const v = q.verb;
+        return `<div class="miss-item">
+          <b>${v.base} — ${v.es}</b>
+          <div class="mi-forms">${v.base} · ${v.past} · ${v.pp}</div>
+          <div class="mi-es" style="color:${v.group.color}">Grupo ${v.group.num} · ${v.group.pattern}</div>
+        </div>`;
+      }).join('');
+    $('btnRetryFailed').style.display = '';
+  } else {
+    $('resMissed').innerHTML = '';
+    $('btnRetryFailed').style.display = 'none';
+  }
+
+  showScreen('results');
+}
+
+/* =========================================================
+   EVENTOS
+   ========================================================= */
+renderGroups();
+wireMode();
+wireCount();
+
+$('btnAllGroups').onclick = ()=>{
+  state.selectedGroups = new Set(GROUPS.map(g=>g.id));
+  renderGroups();
+};
+$('btnNoGroups').onclick = ()=>{
+  state.selectedGroups.clear();
+  renderGroups();
+};
+$('btnStudy').onclick = renderStudy;
+$('btnBackStudy').onclick = ()=> showScreen('setup');
+
+$('btnStart').onclick = ()=>{
+  if(state.selectedGroups.size === 0){
+    alert('Selecciona al menos un grupo.');
+    return;
+  }
+  const q = buildQueue();
+  if(!q.length){
+    if(state.mode === 'tense'){
+      alert('No hay formas únicas para identificar el tiempo en los grupos elegidos.\n\n' +
+            'El grupo 9 tiene las 3 formas iguales y los grupos 5 y 6 solo permiten preguntar por la base.\n' +
+            'Prueba el modo "Mezcla" o "Completar formas".');
+    } else {
+      alert('No se pudieron generar preguntas. Prueba otra combinación.');
+    }
+    return;
+  }
+  state.queue = q;
+  state.index = 0;
+  state.correct = 0;
+  state.wrong = 0;
+  state.failed = [];
+  showScreen('practice');
+  renderQuestion();
+};
+
+$('btnExitPractice').onclick = ()=>{
+  if(state.index > 0 && !confirm('¿Salir? Perderás el progreso de esta sesión.')) return;
+  showScreen('setup');
+};
+
+$('btnNewSession').onclick = ()=> showScreen('setup');
+
+$('btnRetryFailed').onclick = ()=>{
+  const failedVerbs = [...new Set(state.failed.map(q=>q.verb.base))];
+  let q = [];
+
+  if(state.mode === 'tense'){
+    failedVerbs.forEach(base=>{
+      const v = ALL_VERBS.find(x=>x.base===base);
+      if(v) q.push(...buildTenseQuestions(v));
+    });
+  } else {
+    q = state.failed.map(x=>({...x}));
+  }
+
+  q = shuffle(q);
+  if(!q.length) return;
+
+  state.queue = q;
+  state.index = 0;
+  state.correct = 0;
+  state.wrong = 0;
+  state.failed = [];
+  showScreen('practice');
+  renderQuestion();
+};
+</script>
+</body>
+</html>
